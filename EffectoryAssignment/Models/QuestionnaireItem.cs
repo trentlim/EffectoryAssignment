@@ -38,6 +38,13 @@ namespace EffectoryAssignment.Models
         {
             ItemType = 1;
         }
+
+        public Answer? GetAnswerById(int id)
+        {
+            return QuestionnaireItems?
+                .SelectMany(q => q.QuestionnaireItems?.OfType<Answer>() ?? Enumerable.Empty<Answer>())
+                .FirstOrDefault(a => a.AnswerId == id);
+        }
     }
     public class Answer : QuestionnaireItem
     {
