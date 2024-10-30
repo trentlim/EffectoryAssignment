@@ -145,3 +145,4 @@ app.MapPost("questions/{questionId:int}/answers/{answerId:int}/responses", (int 
 });
 
 app.Run();
+public partial class Program { }
