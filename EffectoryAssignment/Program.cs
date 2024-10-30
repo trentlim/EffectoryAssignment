@@ -47,4 +47,10 @@ app.MapGet("/questions", (int page = 1, int pageSize = 10) =>
     return Results.Ok(questions);
 });
 
+app.MapGet("/questions/{id:int}", (int id) =>
+{
+    var question = questionnaire.GetQuestionById(id);
+    return question is not null ? Results.Ok(question) : Results.NotFound();
+});
+
 app.Run();

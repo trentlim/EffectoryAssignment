@@ -16,5 +16,11 @@
             return QuestionnaireItems
                 .SelectMany(item => item.QuestionnaireItems?.OfType<Question>() ?? Enumerable.Empty<Question>());
         }
+
+        public Question? GetQuestionById(int id)
+        {
+            var questions = GetAllQuestions();
+            return questions.FirstOrDefault(item => item.QuestionId == id);
+        }
     }
 }
