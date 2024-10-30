@@ -47,7 +47,51 @@ namespace EffectoryAssignment
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException("Serialization is not implemented.");
+            if (value == null)
+            {
+                writer.WriteNull();
+                return;
+            }
+
+            JObject jo = new JObject();
+
+            // Get all properties of the object
+            var properties = value.GetType().GetProperties();
+
+            foreach (var prop in properties)
+            {
+                // Skip QuestionnaireItems if it's null
+                if (prop.Name == nameof(QuestionnaireItem.QuestionnaireItems) &&
+                    prop.GetValue(value) == null)
+                {
+                    continue;
+                }
+
+                // Get the property value
+                var propValue = prop.GetValue(value);
+                if (propValue != null)
+                {
+                    // Handle special cases like Dictionary<string, string> for Texts
+                    if (prop.Name == nameof(QuestionnaireItem.Texts) &&
+                        propValue is Dictionary<string, string> texts)
+                    {
+                        jo.Add(prop.Name, JToken.FromObject(texts, serializer));
+                    }
+                    // Handle QuestionnaireItems collection
+                    else if (prop.Name == nameof(QuestionnaireItem.QuestionnaireItems) &&
+                            propValue is IEnumerable<QuestionnaireItem> items)
+                    {
+                        jo.Add(prop.Name, JToken.FromObject(items, serializer));
+                    }
+                    // Handle all other properties
+                    else
+                    {
+                        jo.Add(prop.Name, JToken.FromObject(propValue, serializer));
+                    }
+                }
+            }
+
+            jo.WriteTo(writer);
         }
     }
 }
