@@ -8,7 +8,7 @@
 
         public IEnumerable<Question> GetAllQuestions()
         {
-            if (QuestionnaireItems == null || QuestionnaireItems.Count() == 0)
+            if (QuestionnaireItems is null || QuestionnaireItems.Count() == 0)
             {
                 return Enumerable.Empty<Question>();
             }
@@ -21,6 +21,21 @@
         {
             var questions = GetAllQuestions();
             return questions.FirstOrDefault(item => item.QuestionId == id);
+        }
+
+        public Answer? GetAnswerById(int id)
+        {
+            var questions = GetAllQuestions();
+
+            if (questions is null || questions.Count() == 0)
+            {
+                return null;
+            }
+
+            return questions
+                .SelectMany(q => q.QuestionnaireItems?.OfType<Answer>() ?? Enumerable.Empty<Answer>())
+                .FirstOrDefault(a => a.AnswerId == id);
+                
         }
     }
 }
