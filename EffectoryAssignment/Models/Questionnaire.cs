@@ -1,4 +1,7 @@
-﻿namespace EffectoryAssignment.Models
+﻿using System.Reflection.Metadata.Ecma335;
+using EffectoryAssignment.Constants;
+
+namespace EffectoryAssignment.Models
 {
     public class Questionnaire
     {
@@ -35,7 +38,17 @@
             return questions
                 .SelectMany(q => q.QuestionnaireItems?.OfType<Answer>() ?? Enumerable.Empty<Answer>())
                 .FirstOrDefault(a => a.AnswerId == id);
-                
+        }
+
+        public Response? AddResponseToAnswer(Response response, Answer answer)
+        {
+            if (answer.QuestionnaireItems is null)
+            {
+                answer.QuestionnaireItems = new List<QuestionnaireItem>();
+            }
+
+            answer.QuestionnaireItems = answer.QuestionnaireItems.Append(response).ToList();
+            return response;
         }
     }
 }
